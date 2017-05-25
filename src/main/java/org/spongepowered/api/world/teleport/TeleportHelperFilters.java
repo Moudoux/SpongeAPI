@@ -33,6 +33,12 @@ public final class TeleportHelperFilters {
     // SORTFIELDS:ON
 
     /**
+     * Designed to be combined with other filters, this filter determines if a
+     * block is in the config blacklist and returns the appropriate result.
+     */
+    public final static TeleportHelperFilter CONFIG = DummyObjectProvider.createFor(TeleportHelperFilter.class, "CONFIG");
+
+    /**
      * The default behavior for safe teleportation, this filter attempts to
      * find a location to teleport to that has the following characteristics:
      *
@@ -41,6 +47,8 @@ public final class TeleportHelperFilters {
      *     block above) are passable.</li>
      *     <li>The floor is a non-passable or liquid block which is not known
      *     to harm the player.</li>
+     *     <li>The block in question is not blacklisted in the config for the
+     *     floor or body (see {@link #CONFIG}).</li>
      * </ul>
      */
     public final static TeleportHelperFilter DEFAULT = DummyObjectProvider.createFor(TeleportHelperFilter.class, "DEFAULT");
