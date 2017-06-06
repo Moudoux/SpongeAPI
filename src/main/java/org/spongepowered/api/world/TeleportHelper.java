@@ -42,7 +42,10 @@ public interface TeleportHelper {
     int DEFAULT_HEIGHT = 3;
     /** The default width radius to scan for safe locations. */
     int DEFAULT_WIDTH = 9;
-    /** The default distance to check for a suitable floor below any candidate location */
+    /**
+     * The default distance to check for a suitable floor below any candidate
+     * location
+     * */
     int DEFAULT_FLOOR_CHECK_DISTANCE = 2;
 
     /**
@@ -101,7 +104,8 @@ public interface TeleportHelper {
      * <p>It's possible the same location will be returned that was passed in.
      * This means it was safe.</p>
      *
-     * <p>This method will use the default {@link TeleportHelperFilter}</p>
+     * <p>This method will use the default {@link TeleportHelperFilter} and will
+     * respect the blacklist.</p>
      *
      * @param location The location to search nearby.
      * @param height The radius of blocks on the y-axis to search.
@@ -116,7 +120,40 @@ public interface TeleportHelper {
      *         {@link Optional#empty()} will be returned
      */
     default Optional<Location<World>> getSafeLocation(Location<World> location, int height, int width, int floorDistance) {
-        return getSafeLocation(location, height, width, floorDistance, TeleportHelperFilters.DEFAULT);
+        return getSafeLocation(location, height, width, floorDistance, TeleportHelperFilters.DEFAULT, TeleportHelperFilters.CONFIG);
+    }
+
+    /**
+     * Gets the next safe {@link Location} around the given location with a
+     * given tolerance and search radius.
+     *
+     * <p>Safe entails that the returned location will not be somewhere that
+     * would harm an {@link Entity}.</p>
+     *
+     * <p>It's possible the same location will be returned that was passed in.
+     * This means it was safe.</p>
+     *
+     * <p>This method will use the defined blacklist, effectively an equivalent
+     * to adding {@link TeleportHelperFilters#CONFIG} to the filter set.</p>
+     *
+     * @param location The location to search nearby.
+     * @param height The radius of blocks on the y-axis to search.
+     * @param width The radius of blocks on the x and z-axis to search.
+     * @param floorDistance The number of blocks below a selected block to
+     *                      search for a suitable floor, that is, the
+     *                      maximum distance to a floor that the selected
+     *                      point can be. If this is zero or negative, a floor
+     *                      check will not be performed.
+     * @param filters The {@link TeleportHelperFilter}s to check, in addition
+     *                to {@link TeleportHelperFilters#CONFIG}. All filters must
+     *                match for a location to be marked as safe.
+     * @return A safe location near the original location or the original
+     *         location if it is deemed safe. If no safe location can be found,
+     *         {@link Optional#empty()} will be returned
+     */
+    default Optional<Location<World>> getSafeLocationWithBlacklist(Location<World> location, int height, int width, int floorDistance,
+            TeleportHelperFilter... filters) {
+        return getSafeLocation(location, height, width, floorDistance, TeleportHelperFilters.CONFIG, filters);
     }
 
     /**
